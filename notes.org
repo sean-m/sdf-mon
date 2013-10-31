@@ -1,0 +1,18 @@
+* Checks
+
+** Local
+*** ping
+
+** Coproc
+*** CPU - per core?
+*** Mem
+*** Disk
+*** Top
+*** Service - specified in config script
+
+* Features
+** Run as service
+** rsyslog for DB log storage (stretch goal)
+** email notifications
+
+
