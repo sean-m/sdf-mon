@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Checks health and heartbeat for other server
+# Checks health and heartbeat for another server
 
 # Load config
 if [ -f check.conf ]; then
