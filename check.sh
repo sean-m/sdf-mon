@@ -13,7 +13,7 @@ fi
 
 notify_cpu=false
 notify_disk=false
-notify_process=false
+notify_service=false
 
 
 ping -c 4 $target > /dev/null
@@ -29,6 +29,23 @@ if [ $? -eq 0 ]; then
  		echo "cpu usage low: $cpu"
   fi
 
+
+  # check % used disk space per partition
+  disk=`df -h | tail -n +2 | awk '{print $5 ":" $6}'`
+  for partition in ${disk}; do
+    percent=`echo $partition | cut -d % -f 1`
+
+    if [[ $(echo "if (${percent} > ${disk_thresh}) 1 else 0" | bc) -eq 1 ]]; then
+      echo "disk usage above $disk_thresh: $partition"
+      notify_disk=true
+    else
+      echo "disk is fine: $partition"
+    fi
+  done
+
+
+  # check for required services
+  
 
 
 else
