@@ -1,6 +1,47 @@
 #!/usr/bin/env bash
 
-# Checks health and heartbeat for other server
+## Checks health and heartbeat for other server
+### Sean McArdle Nov 2013
+
+# parse options, set global variables
+verbose=false
+report=false
+
+notify_cpu=false
+notify_disk=false
+notify_service=false
+
+while getopts ":vhr" arg; do
+    case "${arg}" in
+	v)
+	    verbose=true
+	    ;;
+	h)	    
+	    show_help
+	    ;;
+	r)
+	    report=true
+	    ;;
+	*)
+	    ;;
+    esac
+done
+
+# functions
+
+function show
+{
+    if $verbose ; then
+	echo $1
+    fi
+}
+
+function show_help
+{
+    echo "You need help"
+    exit
+}
+
 
 # Load config
 if [ -f check.conf ]; then
@@ -11,44 +52,50 @@ else
 fi
 
 
-notify_cpu=false
-notify_disk=false
-notify_service=false
-
-
-ping -c 4 $target > /dev/null
+ping -c 2 $target > /dev/null
 
 if [ $? -eq 0 ]; then
     
   # target is alive, check cpu
-  echo "host $target is up"
-  cpu=`top -bn 4 | grep Cpu\(s\) | awk '{print $5}' | cut -d % -f 1 | awk '{sum+=100-$1}END{print sum/NR}'`
+  show "host $target is up"
+  cpu=`ssh $ssh_user@$target top -bn 4 | grep Cpu\(s\) | awk '{print $5}' | cut -d % -f 1 | awk '{sum+=100-$1}END{print sum/NR}'`
   if [[ $(echo "if (${cpu} > ${cpu_thresh}) 1 else 0" | bc) -eq 1 ]]; then
-  	echo "cpu usage high: $cpu"
- 	else
- 		echo "cpu usage low: $cpu"
+      show "cpu usage high: $cpu"
+  else
+      show "cpu usage low: $cpu"
   fi
 
 
   # check % used disk space per partition
-  disk=`df -h | tail -n +2 | awk '{print $5 ":" $6}'`
+  disk=`ssh $ssh_user@$target df -h | tail -n +2 | awk '{print $5 ":" $6}'`
   for partition in ${disk}; do
     percent=`echo $partition | cut -d % -f 1`
 
     if [[ $(echo "if (${percent} > ${disk_thresh}) 1 else 0" | bc) -eq 1 ]]; then
-      echo "disk usage above $disk_thresh: $partition"
+      show "disk usage above $disk_thresh%: $partition"
       notify_disk=true
     else
-      echo "disk is fine: $partition"
+      show "disk is fine: $partition"
     fi
   done
 
 
   # check for required services
   
+  
+  # if verbose, print values
+  
+  if $report ; then
+      echo "-- This is what I know --"
+      echo "target machine: $target"
+      echo "ssh user: $ssh_user"
+      echo "cpu usage: $cpu"
+      echo "disk usage: $disk"
+      echo "services: $services"
+  fi
 
 
 else
-    echo "cannot reach host $target!"
+    show "cannot reach host $target!"
 fi
 
