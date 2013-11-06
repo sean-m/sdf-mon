@@ -7,6 +7,7 @@
 verbose=false
 report=false
 
+notify_link=false
 notify_cpu=false
 notify_disk=false
 notify_service=false
@@ -38,7 +39,14 @@ function show
 
 function show_help
 {
-    echo "You need help"
+    echo "Usage: check.sh [options]"
+    echo "Options:"
+    echo "   -h : show this help"
+    echo ""
+    echo "   -v : show verbose output"
+    echo ""
+    echo "   -r : show report when completed"
+    echo ""
     exit
 }
 
@@ -61,6 +69,7 @@ if [ $? -eq 0 ]; then
   cpu=`ssh $ssh_user@$target top -bn 4 | grep Cpu\(s\) | awk '{print $5}' | cut -d % -f 1 | awk '{sum+=100-$1}END{print sum/NR}'`
   if [[ $(echo "if (${cpu} > ${cpu_thresh}) 1 else 0" | bc) -eq 1 ]]; then
       show "cpu usage high: $cpu"
+      notify_cpu=true
   else
       show "cpu usage low: $cpu"
   fi
@@ -80,22 +89,127 @@ if [ $? -eq 0 ]; then
   done
 
 
-  # check for required services
-  
-  
-  # if verbose, print values
-  
-  if $report ; then
-      echo "-- This is what I know --"
-      echo "target machine: $target"
-      echo "ssh user: $ssh_user"
-      echo "cpu usage: $cpu"
-      echo "disk usage: $disk"
-      echo "services: $services"
+  # check memory
+  mem_reading=`ssh $ssh_user@$target free -m | tail -n +2`
+  mem_total=`echo $mem_reading | awk '{print $2}'`
+  mem_used=`echo $mem_reading | awk '{print $10}'`
+  mem_percent_used=`echo "$mem_used $mem_total"| awk '{print $1/$2*100}' | cut -d . -f1`
+
+#  show "mem_reading: $mem_reading"
+  show "mem_total: $mem_total"
+  show "mem_used: $mem_used"
+  show "mem_percent_used: $mem_percent_used"
+
+  if [[ $(echo "if (${mem_percent_used} > ${mem_thresh}) 1 else 0" | bc) -eq 1 ]]; then
+      show "mem usage high: $mem_percent_used"
+  else
+      show "mem usage low: $mem_percent_used"
   fi
+
+
+
+  # check for required services
+  processes=`ssh $ssh_user@$target ps -A | tail -n +2 | awk '{print $4}'`
+  services=""
+
+  for proc in ${service_list}; do
+      show $proc
+      echo $processes | grep -q -e $proc
+      val=$?
+      show $val
+      if [ $val -ne 0 ]; then
+	  notify_service=true
+	  services="$services $proc:off"
+      else
+	  services="$services $proc:on"
+      fi
+  done
 
 
 else
     show "cannot reach host $target!"
+    notify_link=true
 fi
+
+
+
+# send notifications if needed
+dir=/tmp/.notifications
+filename=$(date +%Y%m%d%H%M%S)-alert.log
+send_alert=false
+
+if [ ! -d /tmp/.notifications ]; then
+    mkdir /tmp/.notifications
+fi
+
+alert_sub="alert: "
+
+
+if $notify_link ; then
+    alert_sub="$alert_sub link"
+    send_alert=true
+else
+    if $notify_cpu ; then
+	alert_sub="$alert_sub cpu"
+	send_alert=true
+    fi
+
+    if $notify_cpu ; then
+	alert_sub="$alert_sub disk"
+	send_alert=true
+    fi
+
+    if $notify_service ; then
+	alert_sub="$alert_sub service"
+	send_alert=true
+    fi
+
+    # write alert message
+    echo "-- CPU Usage --" > $dir/$filename
+    echo $cpu >> $dir/$filename
+    echo "" >> $dir/$filename
+    echo "-- Disk Usage --" >> $dir/$filename
+    echo "disk" >> $dir/$filename
+    echo "" >> $dir/$filename
+    echo "-- Mem Usage --" >> $dir/$filename
+    echo "total: $mem_total used: $mem_used percentage: $mem_percent_used" >> $dir/$filename
+    echo "" >> $dir/$filename
+    echo "-- Process Check" >> $dir/$filename
+    echo "$services" >> $dir/$filename
+    echo "" >> $dir/$filename
+
+fi
+
+if $send_alert ; then
+    if [ -s $dir/$filename ]; then
+	for addr in ${email_recipient}; do
+	    mail -S smtp=$smtp_server -s "${alert_sub} on ${target}" $addr < $dir/$filename
+	    show "send $alert_sub email to $addr"
+	done
+    else
+	for addr in ${email_recipient}; do
+	    echo "Cannot ping $target!" | mail -S smtp=$smtp_server -s "${alert_sub} on ${target}" $addr 
+	    show "send link error to $addr"
+	done
+    fi
+fi
+
+
+# if verbose, print values
+
+if $report ; then
+    echo "-- CPU Usage --" 
+    echo $cpu 
+    echo "" 
+    echo "-- Disk Usage --" 
+    echo "disk" 
+    echo "" 
+    echo "-- Mem Usage --" 
+    echo "total: $mem_total used: $mem_used percentage: $mem_percent_used" 
+    echo "" 
+    echo "-- Process Check" 
+    echo "" 
+    echo "$services" 
+fi
+
 
