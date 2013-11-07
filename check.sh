@@ -78,7 +78,6 @@ fi
 ping -c 2 $target > /dev/null
 
 if [ $? -eq 0 ]; then
-    
   # target is alive, check cpu
   show "host $target is up"
   cpu=`ssh $ssh_user@$target top -bn 4 | grep Cpu\(s\) | awk '{print $5}' | cut -d % -f 1 | awk '{sum+=100-$1}END{print sum/NR}'`
@@ -110,7 +109,6 @@ if [ $? -eq 0 ]; then
   mem_used=`echo $mem_reading | awk '{print $10}'`
   mem_percent_used=`echo "$mem_used $mem_total"| awk '{print $1/$2*100}' | cut -d . -f1`
 
-#  show "mem_reading: $mem_reading"
   show "mem_total: $mem_total"
   show "mem_used: $mem_used"
   show "mem_percent_used: $mem_percent_used"
@@ -120,7 +118,6 @@ if [ $? -eq 0 ]; then
   else
       show "mem usage low: $mem_percent_used"
   fi
-
 
 
   # check for required services
@@ -140,12 +137,10 @@ if [ $? -eq 0 ]; then
       fi
   done
 
-
 else
     show "cannot reach host $target!"
     notify_link=true
 fi
-
 
 
 # send notifications if needed
@@ -208,8 +203,7 @@ if $send_alert ; then
 fi
 
 
-# if verbose, print values
-
+# if -r passed, write sensor report
 if $report ; then
     echo "-- CPU Usage --" 
     echo $cpu 
