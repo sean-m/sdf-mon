@@ -3,6 +3,30 @@
 ## Checks health and heartbeat for other server
 ### Sean McArdle Nov 2013
 
+
+# functions
+
+function show
+{
+    if $verbose ; then
+	echo $1
+    fi
+}
+
+function show_help
+{
+    echo "Usage: check.sh [options]"
+    echo "Options:"
+    echo "   -h : show this help"
+    echo ""
+    echo "   -v : show verbose output"
+    echo ""
+    echo "   -r : show report when completed"
+    echo ""
+    exit
+}
+
+
 # parse options, set global variables
 verbose=false
 report=false
@@ -28,38 +52,29 @@ while getopts ":vhr" arg; do
     esac
 done
 
-# functions
-
-function show
-{
-    if $verbose ; then
-	echo $1
-    fi
-}
-
-function show_help
-{
-    echo "Usage: check.sh [options]"
-    echo "Options:"
-    echo "   -h : show this help"
-    echo ""
-    echo "   -v : show verbose output"
-    echo ""
-    echo "   -r : show report when completed"
-    echo ""
-    exit
-}
-
-
 # Load config
 if [ -f check.conf ]; then
     . check.conf
 else
-	echo "config.sh file not found, exiting"
-	exit 1
+    echo "config.sh file not found, exiting"
+    exit 1
 fi
 
 
+# setup email distribution group
+if [ ! -f ~/.mailrc ]; then
+    echo "alias alertees $email_recipients" > ~/.mailrc
+else
+    grep -qi "alias alertees" ~/.mailrc
+    if [ $? -eq 0 ]; then
+	sed -i "/alias alertees/c\alias alertees $email_recipients" ~/.mailrc
+    else
+    	echo "alias alertees $email_recipients" > ~/.mailrc
+    fi
+fi
+
+
+# test network link
 ping -c 2 $target > /dev/null
 
 if [ $? -eq 0 ]; then
@@ -147,6 +162,7 @@ alert_sub="alert: "
 
 if $notify_link ; then
     alert_sub="$alert_sub link"
+    echo "Cannot resolve $target" > $dir/$filename
     send_alert=true
 else
     if $notify_cpu ; then
@@ -177,19 +193,16 @@ else
     echo "-- Process Check" >> $dir/$filename
     echo "$services" >> $dir/$filename
     echo "" >> $dir/$filename
-
 fi
 
 if $send_alert ; then
     if [ -s $dir/$filename ]; then
-	for addr in ${email_recipient}; do
-	    mail -S smtp=$smtp_server -s "${alert_sub} on ${target}" $addr < $dir/$filename
-	    show "send $alert_sub email to $addr"
-	done
+	    mail -S smtp=$smtp_server -s "${alert_sub} on ${target}" alertees < $dir/$filename
+	    show "send $alert_sub email to $email_recipients"
     else
 	for addr in ${email_recipient}; do
-	    echo "Cannot ping $target!" | mail -S smtp=$smtp_server -s "${alert_sub} on ${target}" $addr 
-	    show "send link error to $addr"
+	    mail -S smtp=$smtp_server -s "${alert_sub} on ${target}" alertees < $dir/$filename
+	    show "send link error to $email_recipients"
 	done
     fi
 fi
