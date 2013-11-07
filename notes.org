@@ -3,16 +3,28 @@
 ** Local
 *** ping
 
-** Coproc
+** Coproc - Using SSH instead
 *** CPU - per core?
+    This is implemented as a total load reading.
+**** Possibly need a 2s sleep before taking measurements
+     This didn't help the top cpu readings but taking for readings then using 'tail -n +2'
+     to skip the first one and average the last three appears to give more consistante readings.
 *** Mem
+    This is polled from the 'free -m' output, excluding the disk cache from the computed used memory value.
 *** Disk
-*** Top
+    Just parsed 'df -h | tail -n +2' output through awk.
+*** Top - not included in report
+    Not really useful, not used.
 *** Service - specified in config script
+    Services just check the running processes list because I couldn't find a reliable way to parse 'service serviceName status' output over SSH.
 
 * Features
-** Run as service
+** Run as service - abandoned in favor of running as a crontask   
 ** rsyslog for DB log storage (stretch goal)
 ** email notifications
+   Email notifications appear to work but must be used with the heirloom mailx implementation.
+   The BSD and GNU implementations didn't appear to work with Exchange or the ETS smtp server for
+   whatever reason but the heirloom mailx binary works just fine. The advantage is that the smtp
+   server can be explicitly specified rather than infered from mx records.
 
 

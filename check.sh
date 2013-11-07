@@ -80,7 +80,7 @@ ping -c 2 $target > /dev/null
 if [ $? -eq 0 ]; then
   # target is alive, check cpu
   show "host $target is up"
-  cpu=`ssh $ssh_user@$target top -bn 4 | grep Cpu\(s\) | awk '{print $5}' | cut -d % -f 1 | awk '{sum+=100-$1}END{print sum/NR}'`
+  cpu=`ssh $ssh_user@$target sleep 2s && top -d0.5 -bn 4 | grep Cpu\(s\) | awk '{print $5}' | cut -d % -f 1 | tail -n +2 | awk '{sum+=100-$1}END{print sum/NR}'`
   if [[ $(echo "if (${cpu} > ${cpu_thresh}) 1 else 0" | bc) -eq 1 ]]; then
       show "cpu usage high: $cpu"
       notify_cpu=true
@@ -206,17 +206,17 @@ fi
 # if -r passed, write sensor report
 if $report ; then
     echo "-- CPU Usage --" 
-    echo $cpu 
+    echo "${cpu}"
     echo "" 
     echo "-- Disk Usage --" 
-    echo "disk" 
+    echo "${disk}" 
     echo "" 
     echo "-- Mem Usage --" 
     echo "total: $mem_total used: $mem_used percentage: $mem_percent_used" 
     echo "" 
     echo "-- Process Check" 
-    echo "" 
     echo "$services" 
+    echo "" 
 fi
 
 
