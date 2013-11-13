@@ -180,7 +180,7 @@ else
     echo $cpu >> $dir/$filename
     echo "" >> $dir/$filename
     echo "-- Disk Usage --" >> $dir/$filename
-    echo "disk" >> $dir/$filename
+    echo "$disk" >> $dir/$filename
     echo "" >> $dir/$filename
     echo "-- Mem Usage --" >> $dir/$filename
     echo "total: $mem_total used: $mem_used percentage: $mem_percent_used" >> $dir/$filename
