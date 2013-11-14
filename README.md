@@ -45,7 +45,8 @@ The BSD's have their own commands for user creation:
 the links if that fits your needs.
 
 Now that simon exists, we can generate an SSH key pair and add them to simon's 
-authorized_keys file. Logged into the host that will run the check.sh script as the script user, run the following command:
+authorized_keys file. Logged into the host that will run the check.sh script as
+the script user, run the following command:
 
 `ssh-keygen -b 2048 -C 'check.sh ssh key' -t rsa`
 
@@ -110,7 +111,8 @@ line comments following '#' are ignored, number values don't require quotes.
 
 Just running through the values really quick, `target` is the hostname or IP of
 the machine to be monitored, `ssh_user` is the user used to initiate the SSH
-connections, threshold values are self explanatory. The last values deserve some explanation. 
+connections, threshold values are self explanatory. The last values deserve some
+explanation. 
 
 `service_list` allows you to monitor running processes on the
 target machine, it doesn't necessarily check the status of a service, simply
@@ -214,7 +216,8 @@ in the package repositories of most major distributions. To download and
 compile the source when packages aren't available, look [here](http://heirloom.
 sourceforge.net/index.html).
 
-If you would rather use BSD or GNU mail, you need to remove the -S switch from the mail command used towards the end of check.sh.
+If you would rather use BSD or GNU mail, you need to remove the -S switch from
+the mail command used towards the end of check.sh.
 
 ### Top Parsing
 
