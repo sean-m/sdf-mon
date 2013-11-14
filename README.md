@@ -35,16 +35,16 @@ Now that simon exists, we can generate an SSH key pair and add them to simon's
 authorized_keys file. Logged into the host that will run the check.sh script as 
 the user that will execute the script, run the following command:
 
-`ssh-keygen -b 2048 -C 'check.sh ssh key'`
+`ssh-keygen -b 2048 -C 'check.sh ssh key' -t rsa`
 
 You will be prompted for a few options, accepting the defaults by pressing 
 'Enter/Return' it will generate an SSH key pair with a 2048 bit key length and 
-a comment that will help you identify the keys. It writes these out to 
-`~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub`. The important things to know about SSH 
-keys is that the 'id_rsa' key is your private key and should be kept safe, it 
-should never leave the host computer unless you specifically intend it to, 
-'id_rsa.pub' is the public key that is distributed to the hosts that you wish to
-remotely access via SSH. 
+a comment that will help you identify the keys. It writes these out to
+`~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub`. The important things to know about
+SSH keys is that the 'id_rsa' key is your private key and should be kept safe,
+it should never leave the host computer unless you specifically intend it to,
+'id_rsa.pub' is the public key that is distributed to the hosts that you wish
+to remotely access via SSH. 
 
 
 

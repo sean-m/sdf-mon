@@ -1,30 +1,46 @@
 * Checks
 
 ** Local
-*** ping
+*** DONE ping
+    CLOSED: [2013-11-05 Wed 15:52]
 
 ** Coproc - Using SSH instead
-*** CPU - per core?
+*** DONE CPU - per core?
+    CLOSED: [2013-11-06 Wed 15:49]
     This is implemented as a total load reading.
-**** Possibly need a 2s sleep before taking measurements
+**** DONE Possibly need a 2s sleep before taking measurements
+     CLOSED: [2013-11-08 Wed 15:49]
      This didn't help the top cpu readings but taking for readings then using 'tail -n +2'
      to skip the first one and average the last three appears to give more consistante readings.
-*** Mem
+*** DONE Mem
+    CLOSED: [2013-11-06 Wed 15:49]
     This is polled from the 'free -m' output, excluding the disk cache from the computed used memory value.
-*** Disk
+*** DONE Disk
+    CLOSED: [2013-11-05 Wed 15:48]
     Just parsed 'df -h | tail -n +2' output through awk.
-*** Top - not included in report
+***  -- Top - not included in report
     Not really useful, not used.
-*** Service - specified in config script
+*** DONE Service - specified in config script
+    CLOSED: [2013-11-06 Wed 15:48]
     Services just check the running processes list because I couldn't find a reliable way to parse 'service serviceName status' output over SSH.
 
-* Features
+* Features 
 ** Run as service - abandoned in favor of running as a crontask   
 ** rsyslog for DB log storage (stretch goal)
-** email notifications
+** DONE email notifications
+   CLOSED: [2013-11-06 Wed 15:47]
    Email notifications appear to work but must be used with the heirloom mailx implementation.
    The BSD and GNU implementations didn't appear to work with Exchange or the ETS smtp server for
    whatever reason but the heirloom mailx binary works just fine. The advantage is that the smtp
    server can be explicitly specified rather than infered from mx records.
+** DONE Only send notifications on repeat problem
+   CLOSED: [2013-11-13 Wed 16:52]
+   The idea is that instead of sending an email notification, it should write a trigger file
+   so the next time the sript runs, if there is need to send a notification and that file
+   exists, the notifications will be sent. This will cut down on getting an email every time
+   the application is starting up or reindexing the content database.
 
+   Notifications are now only sent the second time that any given thresholds are broken.
+   commit a0e2c72e328e600249bbe05e91f93093f9d823f9
+   
 
