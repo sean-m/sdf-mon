@@ -3,10 +3,6 @@
 ## Checks health and heartbeat for other server
 ### Sean McArdle Nov 2013
 
-current_dir=`pwd`
-script_dir=`dirname $0`
-
-cd $script_dir
 
 # functions
 
@@ -151,18 +147,17 @@ fi
 dir=/tmp/.notifications
 filename=$(date +%Y%m%d%H%M%S)-alert.log
 send_alert=false
-second_offense=false
 
 if [ ! -d /tmp/.notifications ]; then
     mkdir /tmp/.notifications
 fi
 
-alert_sub="$target alert: "
+alert_sub="alert: "
 
 
 if $notify_link ; then
     alert_sub="$alert_sub link"
-    echo "Cannot resolve host" > $dir/$filename
+    echo "Cannot resolve $target" > $dir/$filename
     send_alert=true
 else
     if $notify_cpu ; then
@@ -179,65 +174,32 @@ else
 	alert_sub="$alert_sub service"
 	send_alert=true
     fi
+
+    # write alert message
+    echo "-- CPU Usage --" > $dir/$filename
+    echo $cpu >> $dir/$filename
+    echo "" >> $dir/$filename
+    echo "-- Disk Usage --" >> $dir/$filename
+    echo "$disk" >> $dir/$filename
+    echo "" >> $dir/$filename
+    echo "-- Mem Usage --" >> $dir/$filename
+    echo "total: $mem_total used: $mem_used percentage: $mem_percent_used" >> $dir/$filename
+    echo "" >> $dir/$filename
+    echo "-- Process Check" >> $dir/$filename
+    echo "$services" >> $dir/$filename
+    echo "" >> $dir/$filename
 fi
 
-if $send_alert ; then    
-    if [ -f $dir/notify ]; then
-	# second notification message
-	echo "${target}" > $dir/$filename
-	date >> $dir/$filename
-	echo "" >> $dir/$filename
-	echo "-- CPU Usage --" >> $dir/$filename
-	echo "${cpu}" >> $dir/$filename
-	echo "" >> $dir/$filename
-	echo "-- Disk Usage --" >> $dir/$filename
-	echo "${disk}" >> $dir/$filename
-	echo "" >> $dir/$filename
-	echo "-- Mem Usage --" >> $dir/$filename
-	echo "total: ${mem_total} used: ${mem_used} percentage: ${mem_percent_used}" >> $dir/$filename
-	echo "" >> $dir/$filename
-	echo "-- Process Check" >> $dir/$filename
-	echo "${services}" >> $dir/$filename
-	echo "" >> $dir/$filename
-	echo ""
-	echo "-- Last Alert --" >> $dir/$filename
-	cat `cat $dir/notify` >> $dir/$filename
-
-	if [ -s $dir/$filename ]; then
+if $send_alert ; then
+    if [ -s $dir/$filename ]; then
 	    mail -S smtp=$smtp_server -s "${alert_sub} on ${target}" alertees < $dir/$filename
 	    show "send $alert_sub email to $email_recipients"
-	else
-	    for addr in ${email_recipient}; do
-		mail -S smtp=$smtp_server -s "${alert_sub} on ${target}" alertees < $dir/$filename
-		show "send link error to $email_recipients"
-	    done
-	fi
-	
-	echo "${dir}/${filename}" >> $dir/notifications-sent
-	
-	rm -f "$dir/notify"
     else
-        # first alert message
-	echo ""
-	echo "${target}" >> $dir/$filename
-	date >> $dir/$filename
-	echo "" >> $dir/notify
-	echo "-- CPU Usage --" >> $dir/$filename
-	echo "${cpu}" >> $dir/$filename
-	echo "" >> $dir/$filename
-	echo "-- Disk Usage --" >> $dir/$filename
-	echo "${disk}" >> $dir/$filename
-	echo "" >> $dir/$filename
-	echo "-- Mem Usage --" >> $dir/$filename
-	echo "total: ${mem_total} used: ${mem_used} percentage: ${mem_percent_used}" >> $dir/$filename
-	echo "" >> $dir/$filename
-	echo "-- Process Check" >> $dir/$filename
-	echo "${services}" >> $dir/$filename
-	echo "" >> $dir/$filename
-	echo "${dir}/${filename}" > $dir/notify
+	for addr in ${email_recipient}; do
+	    mail -S smtp=$smtp_server -s "${alert_sub} on ${target}" alertees < $dir/$filename
+	    show "send link error to $email_recipients"
+	done
     fi
-else
-    rm -f "$dir/notify"
 fi
 
 
@@ -258,4 +220,3 @@ if $report ; then
 fi
 
 
-cd $current_dir
