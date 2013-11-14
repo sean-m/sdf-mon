@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>notes</title>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="title" content="notes"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-11-14T13:21-0800"/>
+<meta name="author" content=""/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">notes</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Checks</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Local</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1 ping</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-2">1.2 Coproc - Using SSH instead</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1 CPU - per core?</a></li>
+<li><a href="#sec-1-2-2">1.2.2 Mem</a></li>
+<li><a href="#sec-1-2-3">1.2.3 Disk</a></li>
+<li><a href="#sec-1-2-4">1.2.4 &ndash; Top - not included in report</a></li>
+<li><a href="#sec-1-2-5">1.2.5 Service - specified in config script</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-2">2 Features</a>
+<ul>
+<li><a href="#sec-2-1">2.1 Run as service - abandoned in favor of running as a crontask</a></li>
+<li><a href="#sec-2-2">2.2 rsyslog for DB log storage (stretch goal)</a></li>
+<li><a href="#sec-2-3">2.3 email notifications</a></li>
+<li><a href="#sec-2-4">2.4 Only send notifications on repeat problem</a></li>
+</ul>
+</li>
+<li><a href="#sec-3">3 Documentation</a>
+<ul>
+<li><a href="#sec-3-1">3.1 Is/Isn't</a></li>
+<li><a href="#sec-3-2">3.2 SSH</a></li>
+<li><a href="#sec-3-3">3.3 Config File</a></li>
+<li><a href="#sec-3-4">3.4 cron</a></li>
+<li><a href="#sec-3-5">3.5 mailx</a></li>
+<li><a href="#sec-3-6">3.6 Top Parsing</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Checks</h2>
+<div class="outline-text-2" id="text-1">
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Local</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> <span class="done DONE">DONE</span> ping</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-05 Wed 15:52</span></span><br/>
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Coproc - Using SSH instead</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> <span class="done DONE">DONE</span> CPU - per core?</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-06 Wed 15:49</span></span><br/>
+    This is implemented as a total load reading.
+</p><ul>
+<li id="sec-1-2-1-1"><span class="done DONE">DONE</span> Possibly need a 2s sleep before taking measurements<br/>
+      <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-08 Wed 15:49</span></span><br/>
+     This didn't help the top cpu readings but taking for readings then using 'tail -n +2'
+     to skip the first one and average the last three appears to give more consistante readings.
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> <span class="done DONE">DONE</span> Mem</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-06 Wed 15:49</span></span><br/>
+    This is polled from the 'free -m' output, excluding the disk cache from the computed used memory value.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> <span class="done DONE">DONE</span> Disk</h4>
+<div class="outline-text-4" id="text-1-2-3">
+
+<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-05 Wed 15:48</span></span><br/>
+    Just parsed 'df -h | tail -n +2' output through awk.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> &ndash; Top - not included in report</h4>
+<div class="outline-text-4" id="text-1-2-4">
+
+<p>    Not really useful, not used.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-2-5" class="outline-4">
+<h4 id="sec-1-2-5"><span class="section-number-4">1.2.5</span> <span class="done DONE">DONE</span> Service - specified in config script</h4>
+<div class="outline-text-4" id="text-1-2-5">
+
+<p>     <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-06 Wed 15:48</span></span><br/>
+    Services just check the running processes list because I couldn't find a reliable way to parse 'service serviceName status' output over SSH.
+</p>
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Features</h2>
+<div class="outline-text-2" id="text-2">
+
+
+</div>
+
+<div id="outline-container-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Run as service - abandoned in favor of running as a crontask</h3>
+<div class="outline-text-3" id="text-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> rsyslog for DB log storage (stretch goal)</h3>
+<div class="outline-text-3" id="text-2-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> <span class="done DONE">DONE</span> email notifications</h3>
+<div class="outline-text-3" id="text-2-3">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-06 Wed 15:47</span></span><br/>
+   Email notifications appear to work but must be used with the heirloom mailx implementation.
+   The BSD and GNU implementations didn't appear to work with Exchange or the ETS smtp server for
+   whatever reason but the heirloom mailx binary works just fine. The advantage is that the smtp
+   server can be explicitly specified rather than infered from mx records.
+</p></div>
+
+</div>
+
+<div id="outline-container-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> <span class="done DONE">DONE</span> Only send notifications on repeat problem</h3>
+<div class="outline-text-3" id="text-2-4">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-13 Wed 16:52</span></span><br/>
+   The idea is that instead of sending an email notification, it should write a trigger file
+   so the next time the sript runs, if there is need to send a notification and that file
+   exists, the notifications will be sent. This will cut down on getting an email every time
+   the application is starting up or reindexing the content database.
+</p>
+<p>
+   Notifications are now only sent the second time that any given thresholds are broken.
+   commit a0e2c72e328e600249bbe05e91f93093f9d823f9
+</p>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Documentation</h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> <span class="done DONE">DONE</span> Is/Isn't</h3>
+<div class="outline-text-3" id="text-3-1">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-14 Thu 11:37</span></span><br/>
+</p></div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> <span class="done DONE">DONE</span> SSH</h3>
+<div class="outline-text-3" id="text-3-2">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-14 Thu 11:37</span></span><br/>
+</p></div>
+
+</div>
+
+<div id="outline-container-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> <span class="done DONE">DONE</span> Config File</h3>
+<div class="outline-text-3" id="text-3-3">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-14 Thu 12:00</span></span><br/>
+</p></div>
+
+</div>
+
+<div id="outline-container-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> <span class="done DONE">DONE</span> cron</h3>
+<div class="outline-text-3" id="text-3-4">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-14 Thu 12:30</span></span><br/>
+</p></div>
+
+</div>
+
+<div id="outline-container-3-5" class="outline-3">
+<h3 id="sec-3-5"><span class="section-number-3">3.5</span> <span class="done DONE">DONE</span> mailx</h3>
+<div class="outline-text-3" id="text-3-5">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-14 Thu 12:52</span></span><br/>
+</p></div>
+
+</div>
+
+<div id="outline-container-3-6" class="outline-3">
+<h3 id="sec-3-6"><span class="section-number-3">3.6</span> <span class="done DONE">DONE</span> Top Parsing</h3>
+<div class="outline-text-3" id="text-3-6">
+
+<p>    <span class="timestamp-wrapper"><span class="timestamp-kwd">CLOSED: </span> <span class="timestamp">2013-11-14 Thu 13:01</span></span><br/>
+</p></div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-11-14T13:21-0800</p>
+<p class="author">Author: </p>
+<p class="creator"><a href="http://orgmode.org">Org</a> version 7.9.3f with <a href="http://www.gnu.org/software/emacs/">Emacs</a> version 24</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>

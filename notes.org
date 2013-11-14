@@ -55,7 +55,5 @@
    CLOSED: [2013-11-14 Thu 12:30]
 ** DONE mailx
    CLOSED: [2013-11-14 Thu 12:52]
-** TODO Top Parsing
-
-   
-
+** DONE Top Parsing
+   CLOSED: [2013-11-14 Thu 13:01]
